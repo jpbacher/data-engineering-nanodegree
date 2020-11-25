@@ -98,6 +98,11 @@ time_table_insert = ("""
 # FIND SONGS
 
 song_select = ("""
+    SELECT s.song_id, a.artist_id
+    FROM songs s JOIN artists a ON s.artist_id = a.artist_id
+    WHERE s.title = %s
+    AND a.name = %s
+    AND s.duration = %s
 """)
 
 # QUERY LISTS
