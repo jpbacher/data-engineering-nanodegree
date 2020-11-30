@@ -31,7 +31,7 @@ def process_log_file(cur, filepath):
     for row in t_col:
         time_data.append([row, row.hour, row.day, row.week, row.month, row.year, row.day_name()])
     column_labels = ('start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday')
-    time_df = pd.DataFrame.to_records(time_data, columns=column_labels)
+    time_df = pd.DataFrame.to_records(data=time_data, columns=column_labels)
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
@@ -52,7 +52,8 @@ def process_log_file(cur, filepath):
         else:
             songid, artistid = None, None
         # insert songplay record
-        songplay_data = 
+        songplay_data = (index, pd.to_datetime(row.ts, unit='ms'), int(row.userId), row.level, songid,
+                         artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -61,8 +62,8 @@ def process_data(cur, conn, filepath, func):
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
-        for f in files :
-            all_files.append(os.path.abspath(f))
+        for file in files:
+            all_files.append(os.path.abspath(file))
 
     # get total number of files found
     num_files = len(all_files)
@@ -73,6 +74,8 @@ def process_data(cur, conn, filepath, func):
         func(cur, datafile)
         conn.commit()
         print(f'{i}/{num_files} files processed.')
+
+    return all_files
 
 
 def main():
