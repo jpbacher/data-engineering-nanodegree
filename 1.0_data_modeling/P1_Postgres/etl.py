@@ -31,7 +31,7 @@ def process_log_file(cur, filepath):
     for row in t_col:
         time_data.append([row, row.hour, row.day, row.week, row.month, row.year, row.day_name()])
     column_labels = ('start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday')
-    time_df = pd.DataFrame.to_records(data=time_data, columns=column_labels)
+    time_df = pd.DataFrame.from_records(data=time_data, columns=column_labels)
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
