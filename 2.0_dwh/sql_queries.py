@@ -88,13 +88,28 @@ song_table_create = ("""
 """)
 
 artist_table_create = ("""
+    CREATE TABLE artist(
+        artist_id VARCHAR NOT NULL SORTKEY PRIMARY KEY,
+        name VARCHAR NOT NULL,
+        location VARCHAR,
+        latitude FLOAT, 
+        longitude FLOAT
+    )
 """)
 
 time_table_create = ("""
+    CREATE TABLE time(
+        start_time TIMESTAMP NOT NULL DISTKEY SORTKEY PRIMARY KEY,
+        hour INTEGER NOT NULL,
+        day INTEGER NOT NULL,
+        week INTEGER NOT NULL,
+        month INTEGER NOT NULL,
+        year INTEGER NOT NULL,
+        weekday VARCHAR NOT NULL
+    )
 """)
 
-# STAGING TABLES
-
+# staging tables
 staging_events_copy = ("""
 """).format()
 
