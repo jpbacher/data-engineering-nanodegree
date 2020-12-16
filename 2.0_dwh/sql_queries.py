@@ -68,6 +68,13 @@ songplay_table_create = ("""
 """)
 
 user_table_create = ("""
+    CREATE TABLE users(
+        user_id INTEGER NOT NULL SORTKEY PRIMARY KEY,
+        first_name VARCHAR NOT NULL,
+        last_name VARCHAR NOT NULL,
+        gender VARCHAR NOT NULL,
+        level VARCHAR NOT NULL
+    )
 """)
 
 song_table_create = ("""
