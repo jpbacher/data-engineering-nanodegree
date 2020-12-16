@@ -16,9 +16,6 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # create the tables
 staging_events_table_create= ("""
-""")
-
-staging_songs_table_create = ("""
     CREATE TABLE staging_events(
         artist VARCHAR,
         auth VARCHAR,
@@ -41,7 +38,24 @@ staging_songs_table_create = ("""
     )
 """)
 
+staging_songs_table_create = ("""
+    CREATE TABLE staging_songs(
+        num_songs INTEGER,
+        artist_id VARCHAR,
+        artist_latitude FLOAT,
+        artist_longitude FLOAT,
+        artist_location VARCHAR,
+        artist_name VARCHAR,
+        song_id VARCHAR,
+        title VARCHAR,
+        duration FLOAT,
+        year INTEGER
+    )
+""")
+
 songplay_table_create = ("""
+    CREATE TABLE songplays(
+        
 """)
 
 user_table_create = ("""
