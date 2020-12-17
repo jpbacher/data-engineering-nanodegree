@@ -113,17 +113,19 @@ time_table_create = ("""
 staging_events_copy = ("""
     copy staging_events from {data}
     credentials 'aws_iam_role={arn_role}'
-    region 'us-west-2' format as JSON {log_json_path}
-    timeformat as 'epochmillisecs';
+    region 'us-west-2' format as JSON {log_json_path} timeformat as 'epochmillisecs';
 """).format(data=config['S3']['LOG_DATA'],
             arn_role=config['IAM_ROLE']['ARN'],
             log_json_path=config['S3']['LOG_JSONPATH'])
 
 staging_songs_copy = ("""
-""").format()
+    copy staging_songs from {data}
+    credentials 'aws_iam_role={arn_role}'
+    region 'us-west-2' format as JSON 'auto';
+""").format(data=config['S3']['SONG_DATA'],
+            arn_role=config['IAM_ROLE']['ARN'])
 
-# FINAL TABLES
-
+# final tables
 songplay_table_insert = ("""
 """)
 
