@@ -111,22 +111,36 @@ time_table_create = ("""
 
 # stage tables
 staging_events_copy = ("""
-    copy staging_events from {data}
+    copy staging_events from {bucket}
     credentials 'aws_iam_role={arn_role}'
     region 'us-west-2' format as JSON {log_json_path} timeformat as 'epochmillisecs';
-""").format(data=config['S3']['LOG_DATA'],
+""").format(bucket=config['S3']['LOG_DATA'],
             arn_role=config['IAM_ROLE']['ARN'],
             log_json_path=config['S3']['LOG_JSONPATH'])
 
 staging_songs_copy = ("""
-    copy staging_songs from {data}
+    copy staging_songs from {bucket}
     credentials 'aws_iam_role={arn_role}'
     region 'us-west-2' format as JSON 'auto';
-""").format(data=config['S3']['SONG_DATA'],
+""").format(bucket=config['S3']['SONG_DATA'],
             arn_role=config['IAM_ROLE']['ARN'])
 
 # final tables
 songplay_table_insert = ("""
+    INSERT INTO songplays (
+        start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+    SELECT DISTINCT(e.ts) AS start_time,
+           e.userId AS user_id,
+           e.level AS level,
+           s.song_id AS song_id,
+           s.artist_id AS artist_id,
+           e.sessionId AS session_id,
+           e.location AS location,
+           e.userAgent AS user_agent
+    FROM staging_events e
+    JOIN staging songs s
+    ON (e.song = s.title AND e.artist = s.artist_name)
+    WHERE e.page == 'NextSong'
 """)
 
 user_table_insert = ("""
