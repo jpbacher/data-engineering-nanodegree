@@ -140,10 +140,19 @@ songplay_table_insert = ("""
     FROM staging_events e
     JOIN staging songs s
     ON (e.song = s.title AND e.artist = s.artist_name)
-    WHERE e.page == 'NextSong'
+    WHERE e.page == 'NextSong';
 """)
 
 user_table_insert = ("""
+    INSERT INTO users (user_id, first_name, last_name, gender, level)
+    SELECT DISTINCT(userId) AS user_id,
+           firstName AS first_name,
+           lastName AS last_name,
+           gender, 
+           level
+    FROM staging_events
+    WHERE user_id IS NOT NULL 
+    AND page == 'NextSong';
 """)
 
 song_table_insert = ("""
