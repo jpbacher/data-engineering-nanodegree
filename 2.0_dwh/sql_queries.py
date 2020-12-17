@@ -109,9 +109,15 @@ time_table_create = ("""
     )
 """)
 
-# staging tables
+# stage tables
 staging_events_copy = ("""
-""").format()
+    copy staging_events from {data}
+    credentials 'aws_iam_role={arn_role}'
+    region 'us-west-2' format as JSON {log_json_path}
+    timeformat as 'epochmillisecs';
+""").format(data=config['S3']['LOG_DATA'],
+            arn_role=config['IAM_ROLE']['ARN'],
+            log_json_path=config['S3']['LOG_JSONPATH'])
 
 staging_songs_copy = ("""
 """).format()
