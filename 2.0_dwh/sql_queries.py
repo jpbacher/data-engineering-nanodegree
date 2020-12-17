@@ -1,7 +1,6 @@
 import configparser
 
 
-# config
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
@@ -14,7 +13,7 @@ song_table_drop = "DROP TABLE IF EXISTS songs;"
 artist_table_drop = "DROP TABLE IF EXISTS artists;"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
-# create the tables
+# create tables
 staging_events_table_create= ("""
     CREATE TABLE staging_events(
         artist VARCHAR,
@@ -167,9 +166,26 @@ song_table_insert = ("""
 """)
 
 artist_table_insert = ("""
+    INSERT INTO artists (artist_id, name, location, latitude, longitude)
+    SELECT DISTINCT(artist_id) AS artist_id,
+           artist_name AS name,
+           artist_location AS location,
+           artist_latitude AS latitude,
+           artist_longitude AS longitude
+    FROM staging_songs
+    WHERE artist_id IS NOT NULL;
 """)
 
 time_table_insert = ("""
+    INSERT INTO time (start_time, hour, day, week, month, year, weekday)
+    SELECT DISTINCT(start_time) AS start_time,
+           EXTRACT(hour FROM start_time) AS hour,
+           EXTRACT(day FROM start_time) AS day,
+           EXTRACT(week FROM start_time) AS week,
+           EXTRACT(month FROM start_time) AS month,
+           EXTRACT(year FROM start_time) AS year,
+           EXTRACT(weekday FROM start_time) AS weekday
+    FROM songplays;
 """)
 
 # QUERY LISTS
