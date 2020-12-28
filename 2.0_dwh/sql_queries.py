@@ -109,6 +109,7 @@ time_table_create = ("""
 """)
 
 # stage tables
+# region where S3 buckets located
 staging_events_copy = ("""
     copy staging_events from {bucket}
     credentials 'aws_iam_role={arn_role}'
