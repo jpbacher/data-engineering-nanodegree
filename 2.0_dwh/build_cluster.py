@@ -36,19 +36,31 @@ def make_iam_role(iam, DWH_IAM_ROLE_NAME):
     return role_arn
 
 
-def build_cluster(redshift, role_arn, DWH_CLUSTER_TYPE, DWH_NODE_TYPE, DWH_NUM_NODES,
-                  DWH_DB, DWH_CLUSTER_IDENTIFIER, DWH_DB_USER, DWH_DB_PASSWORD):
+def build_cluster(redshift, role_arn, cluster_type, node_type, num_nodes,
+                  dwh_db, cluster_identifier, db_user, db_user_password):
     # make Redshift cluster
     try:
         response = redshift.create_cluster(
-            ClusterType=DWH_CLUSTER_TYPE,
-            NodeType=DWH_NODE_TYPE,
-            NumberOfNodes=DWH_NUM_NODES,
-            DBName=DWH_DB,
-            ClusterIdentifier=DWH_CLUSTER_IDENTIFIER,
-            MasterUserame=DWH_DB_USER,
-            MasterUserPassword=DWH_DB_PASSWORD,
+            ClusterType=cluster_type,
+            NodeType=node_type,
+            NumberOfNodes=num_nodes,
+            DBName=dwh_db,
+            ClusterIdentifier=cluster_identifier,
+            MasterUserame=db_user,
+            MasterUserPassword=db_user_password,
             IamRoles=[role_arn]
         )
     except Exception as e:
         print(e)
+
+
+def get_cluster_properties(redshift, cluster_identifier):
+    # get Redshift cluster properties
+    cluster_props = redshift.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
+    dwh_endpoint = cluster_props['Endpoint']['Address']
+    dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
+    print(f'DWH_ENDPOINT: {dwh_endpoint}')
+    print(f'DWH_ROLE_ARN: {dwh_role_arn}')
+    return cluster_props, dwh_endpoint, dwh_role_arn
+
+
