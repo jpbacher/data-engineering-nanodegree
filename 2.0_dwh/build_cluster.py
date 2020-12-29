@@ -21,7 +21,7 @@ def make_iam_role(iam, iam_role_name):
                  'Version': '2012-10-17'}
             )
         )
-    except Exception as e:
+    except ClientError as e:
         print(e)
 
     print('Attaching policy...')
@@ -50,7 +50,7 @@ def build_cluster(redshift, role_arn, cluster_type, node_type, num_nodes,
             MasterUserPassword=db_user_password,
             IamRoles=[role_arn]
         )
-    except Exception as e:
+    except ClientError as e:
         print(e)
 
 
@@ -77,7 +77,7 @@ def open_ports(ec2, cluster_props, dwh_port):
             FromPort=int(dwh_port),
             ToPort=int(dwh_port)
         )
-    except Exception as e:
+    except ClientError as e:
         print(e)
 
 
