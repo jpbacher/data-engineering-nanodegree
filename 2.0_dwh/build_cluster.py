@@ -118,9 +118,24 @@ def main():
                         region_name='us-west-2',
                         aws_access_key_id=KEY,
                         aws_secret_access_key=SECRET)
-    iam = boto3.cliet('iam',
-                      region_name='us-west-2',
-                      aws_access_key_id=KEY,
-                      aws_secret_access_key=SECRET)
+    iam = boto3.client('iam',
+                       region_name='us-west-2',
+                       aws_access_key_id=KEY,
+                       aws_secret_access_key=SECRET)
+    redshift = boto3.client('redshift',
+                            region_name='us-west-2',
+                            aws_access_key_id=KEY,
+                            aws_secret_access_key=SECRET)
+
+    role_arn = make_iam_role(iam, DWH_IAM_ROLE_NAME)
+
+    build_cluster(redshift, role_arn, DWH_CLUSTER_TYPE, DWH_NODE_TYPE, DWH_NUM_NODES,
+                  DWH_DB, DWH_CLUSTER_IDENTIFIER, DWH_DB_USER, DWH_DB_PASSWORD)
+
+    cluster_properties = get_cluster_properties(redshift, DWH_CLUSTER_IDENTIFIER)
+    open_ports(ec2, cluster_properties, DWH_PORT)
+
+
+
 
 
