@@ -7,13 +7,13 @@ from botocore.exceptions import ClientError
 
 
 def make_iam_role(iam, iam_role_name):
-    # make an IAM role for Redshift
+    # make an IAM role to grant permission to Redshift cluster
     try:
         print('Creating new IAM Role...')
         dwh_role = iam.create_role(
             Path='/',
             RoleName=iam_role_name,
-            Description='Permits Redshift cluster to call AWS services',
+            Description='Permits Redshift cluster to call AWS services, ie S3',
             AssumeRolePolicyDocument=json.dumps(
                 {'Statement': [{'Action': 'sts.AssumeRole',
                                 'Effect': 'Allow',
@@ -59,8 +59,8 @@ def get_cluster_properties(redshift, cluster_identifier):
     cluster_props = redshift.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
     dwh_endpoint = cluster_props['Endpoint']['Address']
     dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
-    print(f'DWH_ENDPOINT: {dwh_endpoint}')
-    print(f'DWH_ROLE_ARN: {dwh_role_arn}')
+    print(f'DWH_ENDPOINT:: {dwh_endpoint}')
+    print(f'DWH_ROLE_ARN:: {dwh_role_arn}')
     return cluster_props, dwh_endpoint, dwh_role_arn
 
 
@@ -72,7 +72,7 @@ def open_ports(ec2, cluster_props, dwh_port):
         print(f'Security groups: {default_sec_grps}')
         default_sec_grps.authorize_ingress(
             GroupName=default_sec_grps.group_name,
-            CirIp='0.0.0.0/0',
+            CirIp='0.0.0.0/0',  # not recommended - allows access from any computer
             IpProtocol='TCP',
             FromPort=int(dwh_port),
             ToPort=int(dwh_port)
