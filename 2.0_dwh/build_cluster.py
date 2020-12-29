@@ -135,7 +135,14 @@ def main():
     cluster_properties = get_cluster_properties(redshift, DWH_CLUSTER_IDENTIFIER)
     open_ports(ec2, cluster_properties, DWH_PORT)
 
+    conn = psycopg2.connect('host={} dbname={} user={} password={} port={}'.format(
+        *config['CLUSTER'].values()
+    ))
+    cur = conn.cursor()
+    print('Connected...')
+
+    conn.close()
 
 
-
-
+if __name__ == '__main__':
+    main()
