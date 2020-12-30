@@ -76,7 +76,7 @@ def get_cluster_properties(redshift, dwh_cluster_identifier):
 
 
 def open_ports(ec2, cluster_props, dwh_port):
-    # update security group to allow access
+    # open TCP port to access cluster endpoint
     try:
         vpc = ec2.Vpc(id=cluster_props['VpcId'])
         default_sec_grps = list(vpc.security_groups.all())[0]
