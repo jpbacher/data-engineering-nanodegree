@@ -54,9 +54,20 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
         print(e)
 
 
-def get_cluster_properties(redshift, cluster_identifier):
+def get_cluster_properties(redshift, dwh_cluster_identifier):
     # get Redshift cluster properties
-    cluster_props = redshift.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
+    def display_redshift_props(properties):
+        # display properties, check status is 'Available'
+        pd.set_option('display.max_colwidth', -1)
+        prop_keys = ['ClusterIdentifier', 'NodeType', 'ClusterStatus', 'MasterUserName', 'DBName',
+                     'Endpoint', 'VpcId', 'NumberOfNodes']
+        data = [(key, value) for key, value in properties.items() if key in prop_keys]
+        cluster_df = pd.DataFrame(data=data, columns=['ClusterProps', 'Value'])
+        return cluster_df
+
+    cluster_props = redshift.describe_clusters(ClusterIdentifier=dwh_cluster_identifier)['Clusters'][0]
+    display_redshift_props(cluster_props)
+
     dwh_endpoint = cluster_props['Endpoint']['Address']
     dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
     print(f'DWH_ENDPOINT:: {dwh_endpoint}')
