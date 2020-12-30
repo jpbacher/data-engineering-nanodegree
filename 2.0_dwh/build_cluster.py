@@ -36,18 +36,18 @@ def make_iam_role(iam, iam_role_name):
     return role_arn
 
 
-def build_cluster(redshift, role_arn, cluster_type, node_type, num_nodes,
-                  dwh_db, cluster_identifier, db_user, db_user_password):
+def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_nodes,
+                  dwh_db, dwh_cluster_identifier, dwh_db_user, dwh_db_password):
     # make Redshift cluster
     try:
         response = redshift.create_cluster(
-            ClusterType=cluster_type,
-            NodeType=node_type,
-            NumberOfNodes=num_nodes,
+            ClusterType=dwh_cluster_type,
+            NodeType=dwh_node_type,
+            NumberOfNodes=dwh_num_nodes,
             DBName=dwh_db,
-            ClusterIdentifier=cluster_identifier,
-            MasterUserame=db_user,
-            MasterUserPassword=db_user_password,
+            ClusterIdentifier=dwh_cluster_identifier,
+            MasterUserame=dwh_db_user,
+            MasterUserPassword=dwh_db_password,
             IamRoles=[role_arn]
         )
     except ClientError as e:
