@@ -113,11 +113,13 @@ def main():
     DWH_IAM_ROLE_NAME = config.get('DWH', 'DWH_IAM_ROLE_NAME')
 
     cluster_df = pd.DataFrame(
-        {'Param': ['DWH_CLUSTER_TYPE', 'DWH_NUM_NODES', 'DWH_NODE_TYPE',
-                   'DWH_CLUSTER_IDENTIFIER', 'DWH_DB'],
-            'Value': [DWH_CLUSTER_TYPE, DWH_NUM_NODES, DWH_NODE_TYPE,
-                      DWH_CLUSTER_IDENTIFIER, DWH_DB]
-         }
+        dict(Param=['DWH_CLUSTER_TYPE', 'DWH_NUM_NODES', 'DWH_NODE_TYPE',
+                    'DWH_CLUSTER_IDENTIFIER', 'DWH_DB', 'DWH_DB_USER',
+                    'DWH_PORT', 'DWH_IAM_ROLE_NAME'],
+             Value=[DWH_CLUSTER_TYPE, DWH_NUM_NODES, DWH_NODE_TYPE,
+                    DWH_CLUSTER_IDENTIFIER, DWH_DB, DWH_DB_USER,
+                    DWH_PORT, DWH_IAM_ROLE_NAME]
+             )
     )
     print(cluster_df)
 
@@ -147,8 +149,8 @@ def main():
     open_ports(ec2, cluster_properties, DWH_PORT)
 
     conn = psycopg2.connect('host={} dbname={} user={} password={} port={}'.format(
-        *config['CLUSTER'].values()
-    ))
+        *config['CLUSTER'].values())
+    )
     cur = conn.cursor()
     print('Connected...')
 
