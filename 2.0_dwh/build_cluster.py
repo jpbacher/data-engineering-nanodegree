@@ -97,6 +97,12 @@ def open_ports(ec2, cluster_props, dwh_port):
         print(e)
 
 
+def delete_cluster(redshift, dwh_cluster_identifier, skip_snapshot=True):
+    # delete cluster
+    redshift.delete_cluster(ClusterIdentifier=dwh_cluster_identifier,
+                            SkipFinalClusterSnapshot=skip_snapshot)
+
+
 def main():
 
     config = configparser.ConfigParser()
