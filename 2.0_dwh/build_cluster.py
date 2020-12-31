@@ -162,7 +162,6 @@ def main():
                   DWH_DB, DWH_CLUSTER_IDENTIFIER, DWH_DB_USER, DWH_DB_PASSWORD)
 
     cluster_properties, dwh_endpoint = get_cluster_properties(redshift, DWH_CLUSTER_IDENTIFIER)
-    display_redshift_props(cluster_properties)
 
     open_ports(ec2, cluster_properties, DWH_PORT)
 
