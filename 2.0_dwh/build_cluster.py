@@ -13,7 +13,7 @@ def make_iam_role(iam, iam_role_name):
         dwh_role = iam.create_role(
             Path='/',
             RoleName=iam_role_name,
-            Description='Permits Redshift cluster to call AWS services, ie S3',
+            Description='Allows Redshift clusters to call AWS services on your behalf',
             AssumeRolePolicyDocument=json.dumps(
                 {'Statement': [{'Action': 'sts.AssumeRole',
                                 'Effect': 'Allow',
@@ -41,13 +41,16 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
     # make Redshift cluster
     try:
         response = redshift.create_cluster(
+            # hardware parameters
             ClusterType=dwh_cluster_type,
             NodeType=dwh_node_type,
             NumberOfNodes=dwh_num_nodes,
+            # identifiers & credentials
             DBName=dwh_db,
             ClusterIdentifier=dwh_cluster_identifier,
             MasterUserame=dwh_db_user,
             MasterUserPassword=dwh_db_password,
+            # roles for S3 access
             IamRoles=[role_arn]
         )
     except ClientError as e:
@@ -57,7 +60,7 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
 def get_cluster_properties(redshift, dwh_cluster_identifier):
     # get Redshift cluster properties
     def display_redshift_props(properties):
-        # display properties, check status is 'Available'
+        # display cluster properties, check status is 'Available'
         pd.set_option('display.max_colwidth', -1)
         prop_keys = ['ClusterIdentifier', 'NodeType', 'ClusterStatus', 'MasterUserName', 'DBName',
                      'Endpoint', 'VpcId', 'NumberOfNodes']
