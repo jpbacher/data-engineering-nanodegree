@@ -60,15 +60,6 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
 
 def get_cluster_properties(redshift, dwh_cluster_identifier):
     # get Redshift cluster properties
-    def display_redshift_props(properties):
-        # display cluster properties, check status is 'Available'
-        pd.set_option('display.max_colwidth', None)
-        prop_keys = ['ClusterIdentifier', 'NodeType', 'ClusterStatus', 'MasterUserName', 'DBName',
-                     'Endpoint', 'VpcId', 'NumberOfNodes']
-        data = [(key, value) for key, value in properties.items() if key in prop_keys]
-        cluster_df = pd.DataFrame(data=data, columns=['ClusterProps', 'Value'])
-        return cluster_df
-
     cluster_props = redshift.describe_clusters(ClusterIdentifier=dwh_cluster_identifier)['Clusters'][0]
     display_redshift_props(cluster_props)
 
@@ -76,7 +67,17 @@ def get_cluster_properties(redshift, dwh_cluster_identifier):
     dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
     print(f'DWH_ENDPOINT:: {dwh_endpoint}')  # used for host
     print(f'DWH_ROLE_ARN:: {dwh_role_arn}')
-    return cluster_props, dwh_endpoint, dwh_role_arn
+    return cluster_props, dwh_endpoint
+
+
+def display_redshift_props(properties):
+    # display cluster properties, check status is 'Available'
+    pd.set_option('display.max_colwidth', None)
+    prop_keys = ['ClusterIdentifier', 'NodeType', 'ClusterStatus', 'MasterUserName', 'DBName',
+                 'Endpoint', 'VpcId', 'NumberOfNodes']
+    data = [(key, value) for key, value in properties.items() if key in prop_keys]
+    cluster_df = pd.DataFrame(data=data, columns=['ClusterProps', 'Value'])
+    return cluster_df
 
 
 def open_ports(ec2, cluster_props, dwh_port):
@@ -155,6 +156,8 @@ def main():
                   DWH_DB, DWH_CLUSTER_IDENTIFIER, DWH_DB_USER, DWH_DB_PASSWORD)
 
     cluster_properties, dwh_endpoint = get_cluster_properties(redshift, DWH_CLUSTER_IDENTIFIER)
+    display_redshift_props(cluster_properties)
+
     open_ports(ec2, cluster_properties, DWH_PORT)
 
     conn = psycopg2.connect('host={} dbname={} user={} password={} port={}'.format(
