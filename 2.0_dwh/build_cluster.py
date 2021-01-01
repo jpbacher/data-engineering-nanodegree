@@ -61,10 +61,9 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
 def get_cluster_properties(redshift, dwh_cluster_identifier):
     # get Redshift cluster properties
     cluster_props = redshift.describe_clusters(ClusterIdentifier=dwh_cluster_identifier)['Clusters'][0]
-    display_redshift_props(cluster_props)
-
     dwh_endpoint = cluster_props['Endpoint']['Address']
     dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
+
     print(f'DWH_ENDPOINT:: {dwh_endpoint}')  # used for host
     print(f'DWH_ROLE_ARN:: {dwh_role_arn}')
     return cluster_props, dwh_endpoint
@@ -162,6 +161,7 @@ def main():
                   DWH_DB, DWH_CLUSTER_IDENTIFIER, DWH_DB_USER, DWH_DB_PASSWORD)
 
     cluster_properties, dwh_endpoint = get_cluster_properties(redshift, DWH_CLUSTER_IDENTIFIER)
+    display_redshift_props(cluster_properties)
 
     open_ports(ec2, cluster_properties, DWH_PORT)
 
