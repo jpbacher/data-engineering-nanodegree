@@ -14,7 +14,7 @@ artist_table_drop = "DROP TABLE IF EXISTS artists;"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # create tables
-staging_events_table_create= ("""
+staging_events_table_create = ("""
     CREATE TABLE staging_events(
         artist VARCHAR,
         auth VARCHAR,
@@ -126,23 +126,6 @@ staging_songs_copy = ("""
             arn_role=config['IAM_ROLE']['ARN'])
 
 # final tables
-songplay_table_insert = ("""
-    INSERT INTO songplays (
-        start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-    SELECT DISTINCT(e.ts) AS start_time,
-           e.userId AS user_id,
-           e.level AS level,
-           s.song_id AS song_id,
-           s.artist_id AS artist_id,
-           e.sessionId AS session_id,
-           e.location AS location,
-           e.userAgent AS user_agent
-    FROM staging_events e
-    JOIN staging songs s
-    ON (e.song = s.title AND e.artist = s.artist_name)
-    WHERE e.page == 'NextSong';
-""")
-
 user_table_insert = ("""
     INSERT INTO users (user_id, first_name, last_name, gender, level)
     SELECT DISTINCT(userId) AS user_id,
@@ -187,6 +170,23 @@ time_table_insert = ("""
            EXTRACT(year FROM start_time) AS year,
            EXTRACT(weekday FROM start_time) AS weekday
     FROM songplays;
+""")
+
+songplay_table_insert = ("""
+    INSERT INTO songplays (
+        start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+    SELECT DISTINCT(e.ts) AS start_time,
+           e.userId AS user_id,
+           e.level AS level,
+           s.song_id AS song_id,
+           s.artist_id AS artist_id,
+           e.sessionId AS session_id,
+           e.location AS location,
+           e.userAgent AS user_agent
+    FROM staging_events e
+    JOIN staging songs s
+    ON (e.song = s.title AND e.artist = s.artist_name)
+    WHERE e.page == 'NextSong';
 """)
 
 # query lists
