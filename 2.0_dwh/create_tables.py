@@ -1,10 +1,12 @@
 import configparser
 import psycopg2
-from sql_queries import create_table_queries, drop_table_queries
+from queries import drop_table_queries, create_table_queries
 
 
 def drop_tables(cur, conn):
-    # delete any pre-existing tables
+    """
+    Delete any pre-existing tables
+    """
     print('Dropping tables...')
     for query in drop_table_queries:
         cur.execute(query)
@@ -12,7 +14,9 @@ def drop_tables(cur, conn):
 
 
 def create_tables(cur, conn):
-    # create staging and dimensional tables
+    """
+    Create staging and dimensional tables
+    """
     for query in create_table_queries:
         print(f'Running {query}...')
         cur.execute(query)
@@ -20,6 +24,9 @@ def create_tables(cur, conn):
 
 
 def main():
+    """
+    Connect to cluster and set up the database tables
+    """
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
