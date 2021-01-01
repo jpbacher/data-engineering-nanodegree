@@ -7,7 +7,9 @@ from botocore.exceptions import ClientError
 
 
 def make_iam_role(iam, iam_role_name):
-    # make an IAM role to grant permission to Redshift cluster
+    """
+    Make an IAM role to grant permission to Redshift cluster
+    """
     try:
         print('Creating new IAM Role...')
         # must create IAM role in console
@@ -39,7 +41,9 @@ def make_iam_role(iam, iam_role_name):
 
 def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_nodes,
                   dwh_db, dwh_cluster_identifier, dwh_db_user, dwh_db_password):
-    # make Redshift cluster
+    """
+    Make a redshift cluster
+    """
     try:
         response = redshift.create_cluster(
             # hardware parameters
@@ -59,7 +63,9 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
 
 
 def get_cluster_properties(redshift, dwh_cluster_identifier):
-    # get Redshift cluster properties
+    """
+    Get Redshift cluster properties
+    """
     cluster_props = redshift.describe_clusters(ClusterIdentifier=dwh_cluster_identifier)['Clusters'][0]
     # get endpoint to later connect to dwh
     dwh_endpoint = cluster_props['Endpoint']['Address']
@@ -71,7 +77,9 @@ def get_cluster_properties(redshift, dwh_cluster_identifier):
 
 
 def display_redshift_props(properties):
-    # display cluster properties, check status is 'Available'
+    """
+    Display cluster properties, check status is 'Available'
+    """
     pd.set_option('display.max_colwidth', None)
     prop_keys = ['ClusterIdentifier', 'NodeType', 'ClusterStatus', 'MasterUserName', 'DBName',
                  'Endpoint', 'VpcId', 'NumberOfNodes']
@@ -81,7 +89,9 @@ def display_redshift_props(properties):
 
 
 def open_ports(ec2, cluster_props, dwh_port):
-    # open TCP port to access cluster endpoint
+    """
+    Update clusters' security group, and open TCP port to access cluster endpoint
+    """
     try:
         vpc = ec2.Vpc(id=cluster_props['VpcId'])
         default_sec_grps = list(vpc.security_groups.all())[0]
@@ -95,12 +105,6 @@ def open_ports(ec2, cluster_props, dwh_port):
         )
     except ClientError as e:
         print(e)
-
-
-def delete_cluster(redshift, dwh_cluster_identifier, skip_snapshot=True):
-    # delete cluster
-    redshift.delete_cluster(ClusterIdentifier=dwh_cluster_identifier,
-                            SkipFinalClusterSnapshot=skip_snapshot)
 
 
 def main():
