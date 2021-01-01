@@ -45,11 +45,11 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
             # hardware parameters
             ClusterType=dwh_cluster_type,
             NodeType=dwh_node_type,
-            NumberOfNodes=dwh_num_nodes,
+            NumberOfNodes=int(dwh_num_nodes),
             # identifiers & credentials
             DBName=dwh_db,
             ClusterIdentifier=dwh_cluster_identifier,
-            MasterUserame=dwh_db_user,
+            MasterUsername=dwh_db_user,
             MasterUserPassword=dwh_db_password,
             # roles for S3 access
             IamRoles=[role_arn]
@@ -88,7 +88,7 @@ def open_ports(ec2, cluster_props, dwh_port):
         print(f'Security groups: {default_sec_grps}')
         default_sec_grps.authorize_ingress(
             GroupName=default_sec_grps.group_name,
-            CirIp='0.0.0.0/0',  # not recommended - allows access from any computer
+            CidrIp='0.0.0.0/0',  # not recommended - allows access from any computer
             IpProtocol='TCP',
             FromPort=int(dwh_port),
             ToPort=int(dwh_port)
