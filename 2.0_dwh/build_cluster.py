@@ -61,6 +61,7 @@ def build_cluster(redshift, role_arn, dwh_cluster_type, dwh_node_type, dwh_num_n
 def get_cluster_properties(redshift, dwh_cluster_identifier):
     # get Redshift cluster properties
     cluster_props = redshift.describe_clusters(ClusterIdentifier=dwh_cluster_identifier)['Clusters'][0]
+    # get endpoint to later connect to dwh
     dwh_endpoint = cluster_props['Endpoint']['Address']
     dwh_role_arn = cluster_props['IamRoles'][0]['IamRoleArn']
 
