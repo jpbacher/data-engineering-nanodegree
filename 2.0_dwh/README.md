@@ -33,14 +33,7 @@ the data into a set of dimensional tables for the analytics team to further gain
 ## Installation 
 1. Fill in the information in the *dwh.cfg* file 
 2. Run *build_cluster* file to set up foundation:
-'''python
-python build_cluster.py
-'''
 3. Run *create_tables* to establish DB staging and analytical tables:
-'''python
-python create_tables.py
-'''
 4. Run *etl* to acquire data from files in S3, stage the data in Redshift, and store in dimensional tables:
-'''python
-python etl.py
-'''
+
+## Final Output
