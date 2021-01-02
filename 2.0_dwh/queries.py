@@ -189,6 +189,42 @@ songplay_table_insert = ("""
     WHERE e.page == 'NextSong';
 """)
 
+# acquire number of instances for each created table
+staging_events_count = ("""
+    SELECT COUNT(*)
+    FROM staging_events
+""")
+
+staging_songs_count = ("""
+    SELECT COUNT(*)
+    FROM staging_songs
+""")
+
+songplays_count = ("""
+    SELECT COUNT(*)
+    FROM song_plays
+""")
+
+users_count = ("""
+    SELECT COUNT(*)
+    FROM users
+""")
+
+songs_count = ("""
+    SELECT COUNT(*)
+    FROM songs
+""")
+
+artist_count = ("""
+    SELECT COUNT(*)
+    FROM artist
+""")
+
+time_count = ("""
+   SELECT COUNT(*)
+   FROM time
+""")
+
 # query lists
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create,
                         user_table_create, song_table_create, artist_table_create, time_table_create]
@@ -197,3 +233,5 @@ drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songp
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert,
                         time_table_insert]
+table_count_queries = [staging_events_count, staging_songs_count, songplays_count, users_count, songs_count,
+                       artist_count, time_count]
