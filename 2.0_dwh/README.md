@@ -25,7 +25,22 @@ the data into a set of dimensional tables for the analytics team to further gain
 *session_id*, *location*, *user_agent*
 
 **Dimensional Tables**
-* users - 
-* songs - 
-* artist - 
-* time - 
+* users - users: *user_id*, *first_name*, *last_name*, *gender*, *level*
+* songs - songs residing in music DB: *song_id*, *title*, *artist_id*, *year*, *duration*
+* artist - artists in music DB: *artist_id*, *name*, *location*, *lattitude*, *longitude*
+* time - timestamps of instances in **songplays** table: *start_time*, *hour*, *day*, *week*, *month*, *year*, *weekday*
+
+**Installation**
+1. Fill in the information in the *dwh.cfg* file 
+2. Run *build_cluster* file to set up foundation:
+''''python
+python build_cluster.py
+''''
+3. Run *create_tables* to establish DB staging and analytical tables:
+''''python
+python create_tables.py
+''''
+4. Run *etl* to acquire data from files in S3, stage the data in Redshift, and store in dimensional tables:
+''''python
+python etl.py
+'''' 
