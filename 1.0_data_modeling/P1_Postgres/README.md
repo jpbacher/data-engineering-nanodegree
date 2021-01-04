@@ -17,3 +17,9 @@ We will use a relational database for this problem:
 * the data types are structured - we know the structure of the jsons
 * the data is relatively small - we do not need big data related solutions
 * need to use JOINs for this use case
+
+### Project Makeup
+* *create_tables.py*: script drops and creates tables; run this file to reset tables before running ETL scripts
+* *etl.ipynb*: processes files from **/data/song_data** and **/data/log_data** and loads data into tables
+* *etl.py*: reads and processes data from **/data** folder and loads into tables
+* *sql_queries.py*: contains all sql queries used in mentioned scripts
