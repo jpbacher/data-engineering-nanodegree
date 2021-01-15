@@ -1,11 +1,13 @@
 import configparser
 import psycopg2
-from sql_queries import copy_table_queries, insert_table_queries
+from queries import copy_table_queries, insert_table_queries
 
 
 def load_staging_tables(cur, conn):
-    # load files stored in S3
-    print('Inserting json data from S3 into staging tables...')
+    """
+    Load json files stored in S3 to staging tables
+    """
+    print('Inserting data from S3 into staging tables...')
     for query in copy_table_queries:
         print(f'Running {query}...')
         cur.execute(query)
