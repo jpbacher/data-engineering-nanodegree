@@ -26,8 +26,21 @@ def create_spark_session():
 def process_song_data(spark, input_data, output_data):
 
     song_data = input_data + 'song_data/*/*/*/*.json'
-    # create our structure
 
+    # create our structure
+    song_schema = StructType([
+        Fld('artist_id', Str()),
+        Fld('artist_latitude', Dbl()),
+        Fld('artist_longitude', Dbl()),
+        Fld('artist_location', Str()),
+        Fld('artist_name', Str()),
+        Fld('title', Str()),
+        Fld('duration', Dbl()),
+        Fld('year', Int()),
+        Fld('num_songs', Int())
+    ])
+
+    song_df =
 
     # extract columns to create songs table
     songs_table = 
