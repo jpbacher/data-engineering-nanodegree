@@ -2,7 +2,7 @@ import os
 import configparser
 from datetime import datetime
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf
+from pyspark.sql.functions import udf, monotonically_increasing_id
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
 from pyspark.sql.types import (StructType, StructField as Fld, DoubleType as Dbl, StringType as Str,
                                IntegerType as Int, DateType as Date, TimestampType as Tstamp)
@@ -34,7 +34,6 @@ def process_song_data(spark, input_data, output_data):
         Fld('artist_longitude', Dbl()),
         Fld('artist_location', Str()),
         Fld('artist_name', Str()),
-        Fld('song_id', Str()),
         Fld('title', Str()),
         Fld('duration', Dbl()),
         Fld('year', Int()),
@@ -42,20 +41,24 @@ def process_song_data(spark, input_data, output_data):
     ])
 
     # read in our song data
-    song_df = spark.read.json(song_data, schema=song_schema)
+    songs_df = spark.read.json(song_data, schema=song_schema)
 
     # extract columns to create songs table
-    song_fields = ['song_id', 'title', 'artist_id', 'duration', 'year']
-    song_table =
+    songs_fields = ['title', 'artist_id', 'duration', 'year']
+    # add 'song_id' column, will generate monotonically increasing 64-bit integers
+    songs_table = songs_df.select(songs_fields).dropDuplicates().withColumn(
+        'song_id', monotonically_increasing_id())
     
     # write songs table to parquet files partitioned by year and artist
-    song_table
+    songs_table.write.partitionBy('year', 'artist').parquet(output_data + 'songs/')
 
     # extract columns to create artists table
-    artists_table = 
-    
+    artists_fields = ['artist_id', 'artist_name as name', 'artist_location as location',
+                     'artist_latitude as latitude', 'artist_longitude as longitude']
+    artists_table = songs_df.select(artists_fields).dropDuplicates()
+
     # write artists table to parquet files
-    artists_table
+    artists_table.write.parquet(output_data + 'artists/')
 
 
 def process_log_data(spark, input_data, output_data):
