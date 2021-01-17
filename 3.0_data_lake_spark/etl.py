@@ -50,7 +50,7 @@ def process_song_data(spark, input_data, output_data):
         'song_id', monotonically_increasing_id())
     
     # write songs table to parquet files partitioned by year and artist
-    songs_table.write.partitionBy('year', 'artist').parquet(output_data + 'songs/')
+    songs_table.write.partitionBy('year', 'artist').parquet(f'{output_data}songs/')
 
     # extract columns to create artists table
     artists_fields = ['artist_id', 'artist_name as name', 'artist_location as location',
@@ -58,7 +58,7 @@ def process_song_data(spark, input_data, output_data):
     artists_table = songs_df.select(artists_fields).dropDuplicates()
 
     # write artists table to parquet files
-    artists_table.write.parquet(output_data + 'artists/')
+    artists_table.write.parquet(f'{output_data}artists/')
 
 
 def process_log_data(spark, input_data, output_data):
@@ -72,21 +72,24 @@ def process_log_data(spark, input_data, output_data):
     log_df = log_df.filter(log_df.page == 'NextSong')
 
     # extract columns for users table
-    users_fields = ['user_id', 'first_name', 'last_name', 'gender', 'level']
+    users_fields = ['userId as user_id', 'firstName as first_name', 'lastName as last_name', 'gender', 'level']
     users_table = log_df.select(users_fields).dropDuplicates() # selectExpr
     
     # write users table to parquet files
-    users_table.write.parquet(output_data + 'users/')
+    users_table.write.parquet(f'{output_data}users/')
 
     # create timestamp column from original timestamp column
-    get_timestamp = udf(lambda row: datetime.fromtimestamp(row / 1000), Tstamp())
+    get_timestamp = udf(lambda x: datetime.fromtimestamp(x / 1000), Tstamp())
     log_df = log_df.withColumn('time_stamp', get_timestamp('ts'))
     
     # create datetime column from original timestamp column
-    get_datetime = udf(lambda row: )
+    get_datetime = udf(lambda x: to_date(x), Tstamp())
+    log_df = log_df.withColumn('start_time', get_datetime('ts'))
     
     # extract columns to create time table
-    time_table = 
+    log_df = log_df.withColumn()
+
+    time_table =
     
     # write time table to parquet files partitioned by year and month
     time_table
