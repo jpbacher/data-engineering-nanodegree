@@ -11,8 +11,8 @@ from pyspark.sql.types import (StructType, StructField as Fld, DoubleType as Dbl
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
-os.environ['AWS_ACCESS_KEY_ID'] = config['AWS_ACCESS_KEY_ID']
-os.environ['AWS_SECRET_ACCESS_KEY'] = config['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID'] = config.get['AWS', 'AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY'] = config.get['AWS', 'AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -79,12 +79,10 @@ def process_log_data(spark, input_data, output_data):
     users_table.write.parquet(output_data + 'users/')
 
     # create timestamp column from original timestamp column
-    get_timestamp = udf()
-    df = 
+
     
     # create datetime column from original timestamp column
-    get_datetime = udf()
-    df = 
+
     
     # extract columns to create time table
     time_table = 
