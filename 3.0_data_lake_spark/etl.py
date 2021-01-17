@@ -2,7 +2,7 @@ import os
 import configparser
 from datetime import datetime
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, monotonically_increasing_id
+from pyspark.sql.functions import udf, monotonically_increasing_id, to_date
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
 from pyspark.sql.types import (StructType, StructField as Fld, DoubleType as Dbl, StringType as Str,
                                IntegerType as Int, DateType as Date, TimestampType as Tstamp)
@@ -79,10 +79,11 @@ def process_log_data(spark, input_data, output_data):
     users_table.write.parquet(output_data + 'users/')
 
     # create timestamp column from original timestamp column
-
+    get_timestamp = udf(lambda row: datetime.fromtimestamp(row / 1000), Tstamp())
+    log_df = log_df.withColumn('time_stamp', get_timestamp('ts'))
     
     # create datetime column from original timestamp column
-
+    get_datetime = udf(lambda row: )
     
     # extract columns to create time table
     time_table = 
