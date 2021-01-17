@@ -3,7 +3,7 @@ import configparser
 from datetime import datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, monotonically_increasing_id, to_date
-from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql.functions import year, month, dayofmonth, dayofweek, hour, weekofyear, date_format
 from pyspark.sql.types import (StructType, StructField as Fld, DoubleType as Dbl, StringType as Str,
                                IntegerType as Int, DateType as Date, TimestampType as Tstamp)
 
@@ -87,7 +87,12 @@ def process_log_data(spark, input_data, output_data):
     log_df = log_df.withColumn('start_time', get_datetime('ts'))
     
     # extract columns to create time table
-    log_df = log_df.withColumn()
+    log_df = log_df.withColumn('hour', hour('time_stamp'))
+    log_df = log_df.withColumn('day', dayofmonth('time_stamp'))
+    log_df = log_df.withColumn('week', weekofyear('time_stamp'))
+    log_df = log_df.withColumn('month', month('time_stamp'))
+    log_df = log_df.withColumn('year', year('time_stamp'))
+    log_df = log_df.withColumn('weekday', dayofweek('time_stamp'))
 
     time_table =
     
