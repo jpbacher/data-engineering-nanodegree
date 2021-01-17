@@ -27,7 +27,7 @@ def process_song_data(spark, input_data, output_data):
 
     song_data = input_data + 'song_data/*/*/*/*.json'
 
-    # create our structure
+    # create our structure for spark to read
     song_schema = StructType([
         Fld('artist_id', Str()),
         Fld('artist_latitude', Dbl()),
@@ -63,19 +63,20 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
 
-    log_data ='s3://udacity-dend/log_data'
+    log_data = input_data + 'log_data/*/*/*.json'
 
     # read log data file
-    df = 
+    log_df = spark.read.json(log_data)
     
     # filter by actions for song plays
-    df = 
+    log_df = log_df.filter(log_df.page == 'NextSong')
 
-    # extract columns for users table    
-    artists_table = 
+    # extract columns for users table
+    users_fields = ['user_id', 'first_name', 'last_name', 'gender', 'level']
+    users_table = log_df.select(users_fields).dropDuplicates() # selectExpr
     
     # write users table to parquet files
-    artists_table
+    users_table.write.parquet(output_data + 'users/')
 
     # create timestamp column from original timestamp column
     get_timestamp = udf()
