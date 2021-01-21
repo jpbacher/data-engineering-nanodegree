@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.songplays (
     sessionid int4,
     location varchar(256),
     user_agent varchar(256),
-    CONSTRAINT songplays_pkey PRIMARY KEY (playid)
+    CONSTRAINT songplays_primkey PRIMARY KEY (playid)
 );
 
 CREATE TABLE IF NOT EXISTS public.songs (
@@ -60,4 +60,13 @@ CREATE TABLE IF NOT EXISTS public.staging_songs (
     title varchar(256),
     duration numeric(18,0),
     'year' int4
+);
+
+CREATE TABLE IF NOT EXISTS public.users (
+    userid int4 NOT NULL,
+    first_name varchar(256),
+    last_name varchar(256),
+    gender varchar(256),
+    'level' varchar(256),
+    CONSTRAINT user_primkey PRIMARY KEY (userid)
 );
