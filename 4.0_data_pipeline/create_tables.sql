@@ -18,3 +18,12 @@ CREATE TABLE IF NOT EXISTS public.songplays (
     user_agent varchar(256),
     CONSTRAINT songplays_pkey PRIMARY KEY (playid)
 );
+
+CREATE TABLE IF NOT EXISTS public.songs (
+    songid varchar(256) NOT NULL,
+    title varchar(256),
+    artistid varchar(256),
+    'year' int4,
+    duration numeric(18,0),
+    CONSTRAINT song_primkey PRIMARY KEY (songid)
+);
