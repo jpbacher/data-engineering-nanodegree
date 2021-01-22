@@ -15,7 +15,7 @@ class StageToRedshiftOperator(BaseOperator):
                  s3_bucket='',
                  s3_key='',
                  json_path='',
-                 file_format='JSON',
+                 file_format='json',
                  delimiter=',',
                  ignore_headers=1,
                  *args, **kwargs):
@@ -32,9 +32,23 @@ class StageToRedshiftOperator(BaseOperator):
         self.ignore_headers = ignore_headers
 
     def execute(self, context):
-        self.log.info('StageToRedshiftOperator not implemented yet')
+        aws_hook = AwsBaseHook(aws_conn_id=self.aws_credentials_id)
+        credentials = aws_hook.get_credentials()
+        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
+        self.log.info('Removing data from the destination Redshift table')
+        redshift.run(f'DELETE FROM {self.table}')
 
+        self.log.info('Copying data from S3 bucket to Redshift')
+        s3_path = f's3://{self.s3_bucket}'
 
+        if self.file_format == 'json':
+            cmd = f"COPY {self.table} FROM '{s3_path}' ACCESS_KEY_ID '{credentials.access_key}'" \
+                f"SECRET_ACCESS_KEY '{credentials.secret_key}' JSON '{self.json_path}' COMPUPDATE OFF"
+            redshift.run(sql=cmd)
 
-
+        if self.file_format == 'csv':
+            cmd = f"COPY {self.table} FROM '{s3_path}' ACCESS_KEY_ID '{credentials.access_key}'" \
+                f"SECRET_ACCESS_KEY '{credentials.secret_key}' IGNOREHEADER {self.ignore_headers}" \
+                f"DELIMITER '{self.delimiter}'"
+            redshift.run(sql=cmd)
