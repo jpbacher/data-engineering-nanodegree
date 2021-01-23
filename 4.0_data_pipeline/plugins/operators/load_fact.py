@@ -10,7 +10,6 @@ class LoadFactOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  redshift_conn_id='',
-                 aws_credentials_id='',
                  table='',
                  sql_query='',
                  *args, **kwargs):
