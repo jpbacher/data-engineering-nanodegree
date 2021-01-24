@@ -81,7 +81,10 @@ load_song_dimension_table = LoadDimensionOperator(
 
 load_artist_dimension_table = LoadDimensionOperator(
     task_id='Load_artist_dim_table',
-    dag=dag
+    dag=dag,
+    redshift_conn_id='redshift',
+    table='artists',
+    sql_stmt=sql_queries.artist_table_insert
 )
 
 load_time_dimension_table = LoadDimensionOperator(
