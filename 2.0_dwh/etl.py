@@ -15,7 +15,9 @@ def load_staging_tables(cur, conn):
 
 
 def insert_tables(cur, conn):
-    # transform data from staging tables to dimensional tables
+    """
+    Transform data from staging tables to dimensional tables
+    """
     print('Inserting data from staging tables to dimensional tables...')
     for query in insert_table_queries:
         print(f'Running {query}...')
